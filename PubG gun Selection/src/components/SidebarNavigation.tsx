@@ -1,11 +1,11 @@
 import { Anchor, Stack, Text } from '@mantine/core'
+import { Link } from 'react-router-dom'
 
 interface SidebarNavigationProps {
   items: Array<{ label: string; href: string }>
-  onNavigate?: (href: string) => void
 }
 
-export function SidebarNavigation({ items, onNavigate }: SidebarNavigationProps) {
+export function SidebarNavigation({ items }: SidebarNavigationProps) {
   return (
     <aside className="sidebar">
       <Stack gap="xs">
@@ -13,15 +13,7 @@ export function SidebarNavigation({ items, onNavigate }: SidebarNavigationProps)
           Navigation
         </Text>
         {items.map((item) => (
-          <Anchor
-            key={item.label}
-            href={item.href}
-            className="sidebar-link"
-            onClick={(event) => {
-              event.preventDefault()
-              onNavigate?.(item.href)
-            }}
-          >
+          <Anchor key={item.label} component={Link} to={item.href.replace('#', '/')} className="sidebar-link">
             {item.label}
           </Anchor>
         ))}
