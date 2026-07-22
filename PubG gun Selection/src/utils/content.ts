@@ -1,15 +1,16 @@
 export const navItems = [
-  { label: 'Home', href: '#home' },
-  { label: 'Overview', href: '#overview' },
-  { label: 'Loadouts', href: '#loadouts' },
-  { label: 'About', href: '#about' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Home', href: '/' },
+  { label: 'Overview', href: '/overview' },
+  { label: 'Gun Selection', href: '/gun-selection' },
+  { label: 'Loadouts', href: '/loadouts' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
 ]
 
 export const breadcrumbItems = [
-  { label: 'Home', href: '#home' },
-  { label: 'Overview', href: '#overview' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Home', href: '/' },
+  { label: 'Overview', href: '/overview' },
+  { label: 'Contact', href: '/contact' },
 ]
 
 export const slides = [

@@ -1,0 +1,86 @@
+import type { Gun } from './gunSchema'
+
+const imageBaseUrl = 'https://raw.githubusercontent.com/pubg/api-assets/master/Assets/Item/Weapon/Main'
+
+export const fakeFunsData: Gun[] = [
+  {
+    id: 1,
+    name: 'AKM',
+    role: 'Starker Standard-AR',
+    description: 'Die AKM ist zuverlässig, hat viel Schaden und ist ideal für starke Nah- und Mittelstrecken-Engagements.',
+    bullets: ['Hoher Schaden', 'Stabile Trefferquote', 'Sehr gut für aggressive Plays'],
+    image: `${imageBaseUrl}/Item_Weapon_AK47_C.png`,
+  },
+  {
+    id: 2,
+    name: 'M16A4',
+    role: 'Allrounder für jedes Setup',
+    description: 'Die M16A4 ist eine der flexibelsten Waffen im Spiel und passt perfekt zu kontrolliertem, präzisem Gameplay.',
+    bullets: ['Gute Genauigkeit', 'Schnelle Follow-Up-Schüsse', 'Sehr vielseitig'],
+    image: `${imageBaseUrl}/Item_Weapon_M16A4_C.png`,
+  },
+  {
+    id: 3,
+    name: 'UMP45',
+    role: 'Perfekt für enge Räume',
+    description: 'Die UMP45 überzeugt durch schnelle Schüsse und eine starke Kontrolle in schnellen Duellen.',
+    bullets: ['Schnelle Feuerrate', 'Gut im Close-Range', 'Starker Recoil-Compensation'],
+    image: `${imageBaseUrl}/Item_Weapon_UMP_C.png`,
+  },
+  {
+    id: 4,
+    name: 'AWM',
+    role: 'Langstrecken-Monster',
+    description: 'Die AWM ist die perfekte Wahl, wenn du auf lange Distanz präzise und tödlich spielen willst.',
+    bullets: ['Extremer Fernschaden', 'Sehr hohe Präzision', 'Starker Sniper-Value'],
+    image: `${imageBaseUrl}/Item_Weapon_AWM_C.png`,
+  },
+  {
+    id: 5,
+    name: 'MP5K',
+    role: 'Schnell, kompakt und effektiv',
+    description: 'Die MP5K ist ideal für schnelle Wechsel, enge Räume und aggressive Pushes.',
+    bullets: ['Sehr schnelle Schüsse', 'Gut für schnelle Duelle', 'Leicht zu kontrollieren'],
+    image: `${imageBaseUrl}/Item_Weapon_MP5K_C.png`,
+  },
+  {
+    id: 6,
+    name: 'Kar98k',
+    role: 'Klassischer Präzisionsschütze',
+    description: 'Der Kar98k ist eine zuverlässige und präzise Waffe für sichere Treffer über große Distanzen.',
+    bullets: ['Hohe Präzision', 'Starker Einzel-Schuss', 'Sehr gut für Distanz'],
+    image: `${imageBaseUrl}/Item_Weapon_Kar98k_C.png`,
+  },
+  {
+    id: 7,
+    name: 'M24',
+    role: 'Seriöser Sniper-Standard',
+    description: 'Der M24 passt perfekt für vorsichtige, präzise Spieler, die das Feld kontrollieren wollen.',
+    bullets: ['Sehr hohe Genauigkeit', 'Gute Reichweite', 'Leicht zu platzieren'],
+    image: `${imageBaseUrl}/Item_Weapon_M24_C.png`,
+  },
+  {
+    id: 8,
+    name: 'Vector',
+    role: 'Schneller SMG-Engel',
+    description: 'Der Vector ist ein extrem schneller Close-Range-Choice für aggressive Pushes und schnelle Duelle.',
+    bullets: ['Sehr hohe Feuerrate', 'Perfekt im Nahkampf', 'Stark für schnelle Reaktionen'],
+    image: `${imageBaseUrl}/Item_Weapon_Vector_C.png`,
+  },
+  {
+    id: 9,
+    name: 'P90',
+    role: 'Kompakt und verlässlich',
+    description: 'Die P90 überzeugt durch hohe Magazinkapazität und zuverlässige Kontrolle in hektischen Situationen.',
+    bullets: ['Viele Schüsse', 'Gut für lange Feuergefechte', 'Sehr stabil'],
+    image: `${imageBaseUrl}/Item_Weapon_P90_C.png`,
+  },
+  {
+    id: 10,
+    name: 'S12K',
+    role: 'Schrotflinten-Pressure',
+    description: 'Die S12K bringt enorme Wirkung in engen Räumen und überraschend Gegner in Sekunden.',
+    bullets: ['Starker Close-Range-Impact', 'Sehr effektive Zone', 'Ideal für Überraschungsangriffe'],
+    image: `${imageBaseUrl}/Item_Weapon_Saiga12_C.png`,
+  },
+]
