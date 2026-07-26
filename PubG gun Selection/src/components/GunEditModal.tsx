@@ -22,12 +22,17 @@ interface GunEditModalProps {
   onSubmit: (gunData: GunInput) => void
 }
 
-export function GunEditModal({ opened, gun, isLoading, onClose, onSubmit }: GunEditModalProps) {
+export function GunEditModal({
+  opened,
+  gun,
+  isLoading,
+  onClose,
+  onSubmit,
+}: GunEditModalProps) {
   const [formData, setFormData] = useState<GunInput | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [newBullet, setNewBullet] = useState('')
 
-  // Initialisiere Form-Daten wenn Modal geöffnet wird
   if (opened && gun && !formData) {
     setFormData({
       name: gun.name,
@@ -48,14 +53,15 @@ export function GunEditModal({ opened, gun, isLoading, onClose, onSubmit }: GunE
   const handleSubmit = () => {
     if (!formData) return
 
-    // Validiere mit Zod
     const result = GunSchema.omit({ id: true }).safeParse(formData)
 
     if (!result.success) {
       const newErrors: Record<string, string> = {}
+
       result.error.issues.forEach((error) => {
         newErrors[error.path[0] as string] = error.message
       })
+
       setErrors(newErrors)
       return
     }
@@ -86,55 +92,84 @@ export function GunEditModal({ opened, gun, isLoading, onClose, onSubmit }: GunE
   if (!formData) return null
 
   return (
-    <Modal opened={opened} onClose={handleClose} title="Gun bearbeiten" size="lg">
+    <Modal
+      opened={opened}
+      onClose={handleClose}
+      title="Edit Weapon"
+      size="lg"
+    >
       <Stack gap="md">
         <TextInput
           label="Name"
-          placeholder="Gun Name"
+          placeholder="Weapon Name"
           value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.currentTarget.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, name: e.currentTarget.value })
+          }
           error={errors.name}
         />
 
         <TextInput
-          label="Rolle"
-          placeholder="z.B. AR Rifle"
+          label="Role"
+          placeholder="e.g. Assault Rifle"
           value={formData.role}
-          onChange={(e) => setFormData({ ...formData, role: e.currentTarget.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, role: e.currentTarget.value })
+          }
           error={errors.role}
         />
 
         <Textarea
-          label="Beschreibung"
-          placeholder="Detaillierte Beschreibung"
+          label="Description"
+          placeholder="Enter a detailed description"
           value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.currentTarget.value })}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              description: e.currentTarget.value,
+            })
+          }
           error={errors.description}
           minRows={3}
         />
 
         <TextInput
-          label="Bild URL"
+          label="Image URL"
           placeholder="https://..."
           value={formData.image}
-          onChange={(e) => setFormData({ ...formData, image: e.currentTarget.value })}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              image: e.currentTarget.value,
+            })
+          }
           error={errors.image}
         />
 
         <Box>
           <Text fw={500} mb="xs">
-            Eigenschaften
+            Features
           </Text>
+
           <Group gap="xs" mb="md" wrap="wrap">
             {formData.bullets.map((bullet, index) => (
-              <Badge key={index} rightSection={<CloseButton size="xs" onClick={() => removeBullet(index)} />}>
+              <Badge
+                key={index}
+                rightSection={
+                  <CloseButton
+                    size="xs"
+                    onClick={() => removeBullet(index)}
+                  />
+                }
+              >
                 {bullet}
               </Badge>
             ))}
           </Group>
+
           <Group gap="xs">
             <TextInput
-              placeholder="Neue Eigenschaft"
+              placeholder="Add a feature"
               value={newBullet}
               onChange={(e) => setNewBullet(e.currentTarget.value)}
               style={{ flex: 1 }}
@@ -144,19 +179,30 @@ export function GunEditModal({ opened, gun, isLoading, onClose, onSubmit }: GunE
                 }
               }}
             />
+
             <Button onClick={addBullet} variant="light">
-              Hinzufügen
+              Add
             </Button>
           </Group>
-          {errors.bullets && <Text c="red" size="sm">{errors.bullets}</Text>}
+
+          {errors.bullets && (
+            <Text c="red" size="sm">
+              {errors.bullets}
+            </Text>
+          )}
         </Box>
 
         <Group justify="flex-end" gap="xs">
-          <Button variant="default" onClick={handleClose} disabled={isLoading}>
-            Abbrechen
+          <Button
+            variant="default"
+            onClick={handleClose}
+            disabled={isLoading}
+          >
+            Cancel
           </Button>
+
           <Button onClick={handleSubmit} loading={isLoading}>
-            Speichern
+            Save Changes
           </Button>
         </Group>
       </Stack>
