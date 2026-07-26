@@ -1,6 +1,6 @@
 export const navItems = [
   { label: 'Home', href: '/' },
-  { label: 'Overview', href: '/overview' },
+ 
   { label: 'Gun Selection', href: '/gun-selection' },
   { label: 'Loadouts', href: '/loadouts' },
   { label: 'About', href: '/about' },
@@ -9,7 +9,7 @@ export const navItems = [
 
 export const breadcrumbItems = [
   { label: 'Home', href: '/' },
-  { label: 'Overview', href: '/overview' },
+
   { label: 'Contact', href: '/contact' },
 ]
 
@@ -34,17 +34,3 @@ export const slides = [
   },
 ]
 
-export const featureCards = [
-  {
-    title: 'Smart selection',
-    text: 'Browse weapon styles that match your play pattern in seconds.',
-  },
-  {
-    title: 'Quick insights',
-    text: 'Get a clear overview of recoil, range and mobility.',
-  },
-  {
-    title: 'Build confidence',
-    text: 'Pick a setup that feels reliable before your next match.',
-  },
-]

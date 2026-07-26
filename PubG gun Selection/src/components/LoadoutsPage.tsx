@@ -5,7 +5,7 @@ export function LoadoutsPage() {
     <Paper id="loadouts" p="xl" radius="xl" className="panel-card">
       <Title order={2}>Loadouts</Title>
       <Text c="dimmed" mt="xs">
-        Explore your favorite loadouts and weapon combinations here.
+        Coming soon.
       </Text>
     </Paper>
   )
