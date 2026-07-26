@@ -24,6 +24,7 @@ export function GunsTable() {
   const { data: guns, isLoading, error } = useGuns()
   const updateMutation = useUpdateGun()
   const deleteMutation = useDeleteGun()
+
   const [selectedGun, setSelectedGun] = useState<Gun | null>(null)
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
@@ -42,6 +43,7 @@ export function GunsTable() {
 
   const handleConfirmDelete = async () => {
     if (!gunToDelete) return
+
     try {
       await deleteMutation.mutateAsync(gunToDelete.id)
       setDeleteModalOpen(false)
@@ -53,11 +55,13 @@ export function GunsTable() {
 
   const handleUpdateGun = async (gunData: GunInput) => {
     if (!selectedGun) return
+
     try {
       await updateMutation.mutateAsync({
         id: selectedGun.id,
         gunData,
       })
+
       setEditModalOpen(false)
       setSelectedGun(null)
     } catch (err) {
@@ -76,38 +80,51 @@ export function GunsTable() {
   if (error) {
     return (
       <Alert icon={<IconAlertCircle />} color="red">
-        Fehler beim Laden der Waffen: {error.message}
+        Error loading weapons: {error.message}
       </Alert>
     )
   }
 
   const rows = guns?.map((gun) => (
     <Table.Tr key={gun.id}>
-      <Table.Td>
-        <Group gap="sm">
+      <Table.Td style={{ minWidth: 120 }}>
+        <Group gap="sm" wrap="nowrap">
           <img
             src={gun.image}
             alt={gun.name}
-            style={{ width: 40, height: 40, objectFit: 'contain', borderRadius: 4 }}
+            style={{
+              width: 40,
+              height: 40,
+              minWidth: 40,
+              objectFit: 'contain',
+              borderRadius: 4,
+            }}
           />
+
           <div>
-            <Text fw={500}>{gun.name}</Text>
-            <Text size="sm" c="dimmed">
+            <Text fw={500} style={{ whiteSpace: 'nowrap' }}>
+              {gun.name}
+            </Text>
+
+            <Text size="sm" c="dimmed" style={{ whiteSpace: 'nowrap' }}>
               ID: {gun.id}
             </Text>
           </div>
         </Group>
       </Table.Td>
+
       <Table.Td>
         <Badge variant="light" color="blue">
           {gun.role}
         </Badge>
       </Table.Td>
+
       <Table.Td>
         <Text size="sm" lineClamp={2}>
           {gun.description}
         </Text>
       </Table.Td>
+
       <Table.Td>
         <Group gap="xs" wrap="wrap">
           {gun.bullets.map((bullet, idx) => (
@@ -117,35 +134,40 @@ export function GunsTable() {
           ))}
         </Group>
       </Table.Td>
+
       <Table.Td>
-        <Group gap="xs" justify="flex-end">
-          <Tooltip label="Bearbeiten">
+        <Group gap="xs" justify="flex-end" wrap="nowrap">
+          <Tooltip label="Edit">
             <ActionIcon
               variant="light"
               color="blue"
               onClick={() => handleEditClick(gun)}
               loading={updateMutation.isPending}
+              aria-label={`Edit ${gun.name}`}
             >
               <IconEdit size={16} />
             </ActionIcon>
           </Tooltip>
-          <Tooltip label="Löschen">
+
+          <Tooltip label="Delete">
             <ActionIcon
               variant="light"
               color="red"
               onClick={() => handleDeleteClick(gun)}
               loading={deleteMutation.isPending}
+              aria-label={`Delete ${gun.name}`}
             >
               <IconTrash size={16} />
             </ActionIcon>
           </Tooltip>
-          <Tooltip label="Vorschau">
+
+          <Tooltip label="Preview">
             <Button
               size="xs"
               variant="light"
               onClick={() => setPreviewGun(gun)}
             >
-              Vorschau
+              Preview
             </Button>
           </Tooltip>
         </Group>
@@ -157,33 +179,36 @@ export function GunsTable() {
     <Paper p="xl" radius="xl" className="panel-card">
       <Stack gap="md">
         <div>
-          <Title order={2}>Waffen-Verwaltung</Title>
+          <Title order={2}>Weapon Management</Title>
+
           <Text c="dimmed" mt="xs">
-            Verwalte alle Waffen mit Edit- und Delete-Funktionen
+            Manage all weapons using the edit and delete functions.
           </Text>
         </div>
 
         <div style={{ overflowX: 'auto' }}>
-          <Table striped highlightOnHover>
+          <Table striped highlightOnHover style={{ minWidth: 1100 }}>
             <Table.Thead>
               <Table.Tr>
-                <Table.Th>Waffe</Table.Th>
-                <Table.Th>Rolle</Table.Th>
-                <Table.Th>Beschreibung</Table.Th>
-                <Table.Th>Eigenschaften</Table.Th>
-                <Table.Th style={{ textAlign: 'right' }}>Aktionen</Table.Th>
+                <Table.Th>Weapon</Table.Th>
+                <Table.Th>Role</Table.Th>
+                <Table.Th>Description</Table.Th>
+                <Table.Th>Features</Table.Th>
+                <Table.Th style={{ textAlign: 'right' }}>
+                  Actions
+                </Table.Th>
               </Table.Tr>
             </Table.Thead>
+
             <Table.Tbody>{rows}</Table.Tbody>
           </Table>
         </div>
 
         <Text c="dimmed" size="sm">
-          Insgesamt: {guns?.length || 0} Waffen
+          Total: {guns?.length || 0} weapons
         </Text>
       </Stack>
 
-      {/* Edit Modal */}
       <GunEditModal
         opened={editModalOpen}
         gun={selectedGun}
@@ -195,52 +220,81 @@ export function GunsTable() {
         onSubmit={handleUpdateGun}
       />
 
-      {/* Delete Confirmation Modal */}
-      <Modal opened={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title="Löschen bestätigen">
+      <Modal
+        opened={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false)
+          setGunToDelete(null)
+        }}
+        title="Confirm deletion"
+      >
         <Stack gap="md">
           <Text>
-            Möchtest du die Waffe <strong>{gunToDelete?.name}</strong> wirklich löschen?
+            Are you sure you want to delete{' '}
+            <strong>{gunToDelete?.name}</strong>?
           </Text>
+
           <Group justify="flex-end">
-            <Button variant="default" onClick={() => setDeleteModalOpen(false)}>
-              Abbrechen
+            <Button
+              variant="default"
+              onClick={() => {
+                setDeleteModalOpen(false)
+                setGunToDelete(null)
+              }}
+            >
+              Cancel
             </Button>
+
             <Button
               color="red"
               onClick={handleConfirmDelete}
               loading={deleteMutation.isPending}
             >
-              Löschen
+              Delete
             </Button>
           </Group>
         </Stack>
       </Modal>
 
-      {/* Preview Modal */}
-      <Modal opened={!!previewGun} onClose={() => setPreviewGun(null)} title={previewGun?.name} size="lg">
+      <Modal
+        opened={!!previewGun}
+        onClose={() => setPreviewGun(null)}
+        title={previewGun?.name}
+        size="lg"
+      >
         {previewGun && (
           <Stack gap="md">
             <img
               src={previewGun.image}
               alt={previewGun.name}
-              style={{ width: '100%', maxHeight: 300, objectFit: 'contain' }}
+              style={{
+                width: '100%',
+                maxHeight: 300,
+                objectFit: 'contain',
+              }}
             />
+
             <div>
               <Text fw={500} mb="xs">
-                Rolle
+                Role
               </Text>
+
               <Badge color="blue">{previewGun.role}</Badge>
             </div>
+
             <div>
               <Text fw={500} mb="xs">
-                Beschreibung
+                Description
               </Text>
+
               <Text>{previewGun.description}</Text>
             </div>
+
             <div>
               <Text fw={500} mb="xs">
-                Eigenschaften
+                Features
               </Text>
+
               <Group gap="xs" wrap="wrap">
                 {previewGun.bullets.map((bullet, idx) => (
                   <Badge key={idx} variant="light">
