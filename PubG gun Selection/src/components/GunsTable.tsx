@@ -16,8 +16,20 @@ import {
   Modal,
   TextInput,
   Select,
+  Progress,
+  Divider,
+  SimpleGrid,
 } from '@mantine/core'
-import { IconEdit, IconTrash, IconAlertCircle, IconSearch } from '@tabler/icons-react'
+import {
+  IconEdit,
+  IconTrash,
+  IconAlertCircle,
+  IconSearch,
+  IconFlame,
+  IconTargetArrow,
+  IconBolt,
+  IconActivity,
+} from '@tabler/icons-react'
 import { useGuns, useCreateGun, useUpdateGun, useDeleteGun } from '../utils/hooks'
 import type { Gun, GunInput } from '../utils/gunSchema'
 import { GunEditModal } from './GunEditModal'
@@ -177,6 +189,12 @@ export function GunsTable() {
           return a.name.localeCompare(b.name)
       }
   })
+
+  const getStatColor = (value: number) => {
+    if (value >= 75) return 'green'
+    if (value >= 50) return 'yellow'
+    return 'red'
+  }
 
   const rows = filteredGuns?.map((gun) => (
     <Table.Tr key={gun.id}>
@@ -410,49 +428,164 @@ export function GunsTable() {
         opened={!!previewGun}
         onClose={() => setPreviewGun(null)}
         title={previewGun?.name}
-        size="lg"
+        size="xl"
+        centered
       >
         {previewGun && (
-          <Stack gap="md">
-            <img
-              src={previewGun.image}
-              alt={previewGun.name}
+          <Stack gap="xl">
+
+            <Paper
+              withBorder
+              radius="lg"
+              p="xl"
               style={{
-                width: '100%',
-                maxHeight: 300,
-                objectFit: 'contain',
+                background:
+                  'linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(17, 24, 39, 0.85))',
               }}
-            />
+            >
+              <img
+                src={previewGun.image}
+                alt={previewGun.name}
+                style={{
+                  width: '100%',
+                  height: 300,
+                  objectFit: 'contain',
+                  display: 'block',
+                }}
+              />
+            </Paper>
 
             <div>
-              <Text fw={500} mb="xs">
-                Role
-              </Text>
+              <Title order={2}>{previewGun.name}</Title>
 
-              <Badge color="blue">{previewGun.role}</Badge>
+              <Badge mt="sm" size="lg" color="blue">
+                {previewGun.role}
+              </Badge>
             </div>
 
-            <div>
-              <Text fw={500} mb="xs">
-                Description
-              </Text>
+            <Divider />
 
-              <Text>{previewGun.description}</Text>
-            </div>
+            <SimpleGrid cols={2} spacing="xl">
+
+              <div>
+                <Group gap="xs" mb={4}>
+                  <IconFlame size={18} />
+                  <Text fw={600}>
+                    Damage ({previewGun.damage})
+                  </Text>
+                </Group>
+
+                <Progress
+                  value={previewGun.damage}
+                  color={getStatColor(previewGun.damage)}
+                  size="lg"
+                  radius="xl"
+                />
+              </div>
+
+              <div>
+                <Group gap="xs" mb={4}>
+                  <IconTargetArrow size={18} />
+                  <Text fw={600}>
+                    Range ({previewGun.range})
+                  </Text>
+                </Group>
+
+                <Progress value={previewGun.range} color={getStatColor(previewGun.range)} size="lg" radius="xl" />
+              </div>
+
+              <div>
+                <Group gap="xs" mb={4}>
+                  <IconBolt size={18} />
+                  <Text fw={600}>
+                    Fire Rate ({previewGun.fireRate})
+                  </Text>
+                </Group>
+
+                <Progress
+                  value={previewGun.fireRate}
+                  color={getStatColor(previewGun.fireRate)}
+                  size="lg"
+                  radius="xl"
+                />
+              </div>
+
+              <div>
+                <Group gap="xs" mb={4}>
+                  <IconActivity size={18} />
+                  <Text fw={600}>
+                    Recoil ({previewGun.recoil})
+                  </Text>
+                </Group>
+
+                <Progress value={previewGun.recoil} color={getStatColor(previewGun.recoil)} size="lg" radius="xl" />
+              </div>
+
+            </SimpleGrid>
+
+            <Divider />
+
+            <SimpleGrid cols={2}>
+
+              <Paper withBorder p="md" radius="md">
+                <Text size="sm" c="dimmed">
+                  Magazine Size
+                </Text>
+
+                <Title order={3}>
+                  {previewGun.magazineSize}
+                </Title>
+              </Paper>
+
+              <Paper withBorder p="md" radius="md">
+                <Text size="sm" c="dimmed">
+                  Ammo Type
+                </Text>
+
+                <Title order={3}>
+                  {previewGun.ammoType}
+                </Title>
+              </Paper>
+
+            </SimpleGrid>
+
+            <Divider />
 
             <div>
-              <Text fw={500} mb="xs">
+
+              <Text fw={600} mb="sm">
                 Features
               </Text>
 
-              <Group gap="xs" wrap="wrap">
-                {previewGun.bullets.map((bullet, idx) => (
-                  <Badge key={idx} variant="light">
-                    {bullet}
+              <Group gap="sm">
+                {previewGun.bullets.map((bullet) => (
+                  <Badge
+                    key={bullet}
+                    color="green"
+                    size="lg"
+                    variant="light"
+                  >
+                    ✓ {bullet}
                   </Badge>
                 ))}
               </Group>
+
             </div>
+
+            <Divider />
+
+            <div>
+
+              <Text fw={600} mb="sm">
+                Description
+              </Text>
+
+              <Text c="dimmed">
+                {previewGun.description}
+              </Text>
+
+            </div>
+
           </Stack>
         )}
       </Modal>
