@@ -18,6 +18,7 @@ interface GunEditModalProps {
   opened: boolean
   gun: Gun | null
   isLoading: boolean
+  mode?: 'create' | 'edit'
   onClose: () => void
   onSubmit: (gunData: GunInput) => void
 }
@@ -26,33 +27,40 @@ export function GunEditModal({
   opened,
   gun,
   isLoading,
+  mode = 'edit',
   onClose,
   onSubmit,
 }: GunEditModalProps) {
-  const [formData, setFormData] = useState<GunInput | null>(null)
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [newBullet, setNewBullet] = useState('')
-
-  if (opened && gun && !formData) {
-    setFormData({
+  const [formData, setFormData] = useState<GunInput>(() => {
+  if (gun) {
+    return {
       name: gun.name,
       role: gun.role,
       description: gun.description,
       bullets: [...gun.bullets],
       image: gun.image,
-    })
+    }
   }
 
+  return {
+    name: '',
+    role: '',
+    description: '',
+    bullets: [],
+    image: '',
+  }
+})
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [newBullet, setNewBullet] = useState('')
+
   const handleClose = () => {
-    setFormData(null)
     setErrors({})
     setNewBullet('')
     onClose()
   }
 
   const handleSubmit = () => {
-    if (!formData) return
-
+   
     const result = GunSchema.omit({ id: true }).safeParse(formData)
 
     if (!result.success) {
@@ -71,7 +79,7 @@ export function GunEditModal({
   }
 
   const addBullet = () => {
-    if (newBullet.trim() && formData) {
+    if (newBullet.trim()) {
       setFormData({
         ...formData,
         bullets: [...formData.bullets, newBullet.trim()],
@@ -81,21 +89,17 @@ export function GunEditModal({
   }
 
   const removeBullet = (index: number) => {
-    if (formData) {
-      setFormData({
-        ...formData,
-        bullets: formData.bullets.filter((_, i) => i !== index),
-      })
-    }
+    setFormData({
+      ...formData,
+      bullets: formData.bullets.filter((_, i) => i !== index),
+    })
   }
-
-  if (!formData) return null
 
   return (
     <Modal
       opened={opened}
       onClose={handleClose}
-      title="Edit Weapon"
+      title={mode === 'create' ? 'Add New Weapon' : 'Edit Weapon'}
       size="lg"
     >
       <Stack gap="md">
@@ -154,7 +158,7 @@ export function GunEditModal({
           <Group gap="xs" mb="md" wrap="wrap">
             {formData.bullets.map((bullet, index) => (
               <Badge
-                key={index}
+                key={bullet}
                 rightSection={
                   <CloseButton
                     size="xs"
@@ -202,7 +206,7 @@ export function GunEditModal({
           </Button>
 
           <Button onClick={handleSubmit} loading={isLoading}>
-            Save Changes
+            {mode === 'create' ? 'Create Weapon' : 'Save Changes'}
           </Button>
         </Group>
       </Stack>

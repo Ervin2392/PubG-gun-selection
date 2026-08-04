@@ -3,7 +3,9 @@ import {
   Text,
   Title,
 } from '@mantine/core'
+import { Notifications } from '@mantine/notifications'
 import '@mantine/core/styles.css'
+import '@mantine/notifications/styles.css'
 import '@mantine/carousel/styles.css'
 import './App.css'
 import { BrowserRouter } from 'react-router-dom'
@@ -19,28 +21,32 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <MantineProvider defaultColorScheme="dark">
-        <BrowserRouter>
-          <div className="app-shell">
-            <header className="topbar">
-              <div>
-                <Text size="xs" tt="uppercase" c="dimmed" fw={700}>
-                  PUBG Gun Selection
-                </Text>
-                <Title order={2}>PubG Gun Selection</Title>
-              </div>
-              <TopNavigation items={navItems} />
-            </header>
+  <Notifications />
 
-            <div className="content-grid">
-              <SidebarNavigation items={navItems} />
+  <BrowserRouter>
+    <div className="app-shell">
+      <header className="topbar">
+        <div>
+          <Text size="xs" tt="uppercase" c="dimmed" fw={700}>
+            PUBG Gun Selection
+          </Text>
 
-              <main className="main-content">
-                <AppRoutes />
-              </main>
-            </div>
-          </div>
-        </BrowserRouter>
-      </MantineProvider>
+          <Title order={2}>PubG Gun Selection</Title>
+        </div>
+
+        <TopNavigation items={navItems} />
+      </header>
+
+      <div className="content-grid">
+        <SidebarNavigation items={navItems} />
+
+        <main className="main-content">
+          <AppRoutes />
+        </main>
+      </div>
+    </div>
+  </BrowserRouter>
+</MantineProvider>
     </QueryClientProvider>
   )
 }

@@ -1,9 +1,9 @@
 import axios from 'axios'
 import type { Gun, GunInput } from './gunSchema'
-import { fakeFunsData } from './fakeData'
+import { fakeGunsData } from './fakeData'
 
 // In-memory storage für die Demonstration
-let gunsStore: Gun[] = [...fakeFunsData]
+const gunsStore: Gun[] = [...fakeGunsData]
 
 // Erstelle einen axios instance
 const apiClient = axios.create({

@@ -3,7 +3,7 @@ import type { Gun } from './gunSchema'
 const imageBaseUrl =
   'https://raw.githubusercontent.com/pubg/api-assets/master/Assets/Item/Weapon/Main'
 
-export const fakeFunsData: Gun[] = [
+export const fakeGunsData: Gun[] = [
   {
     id: 1,
     name: 'AKM',

@@ -14,22 +14,30 @@ import {
   Button,
   Tooltip,
   Modal,
+  TextInput,
+  Select,
 } from '@mantine/core'
-import { IconEdit, IconTrash, IconAlertCircle } from '@tabler/icons-react'
-import { useGuns, useUpdateGun, useDeleteGun } from '../utils/hooks'
+import { IconEdit, IconTrash, IconAlertCircle, IconSearch } from '@tabler/icons-react'
+import { useGuns, useCreateGun, useUpdateGun, useDeleteGun } from '../utils/hooks'
 import type { Gun, GunInput } from '../utils/gunSchema'
 import { GunEditModal } from './GunEditModal'
+import { notifications } from '@mantine/notifications'
 
 export function GunsTable() {
   const { data: guns, isLoading, error } = useGuns()
+  const createMutation = useCreateGun()
   const updateMutation = useUpdateGun()
   const deleteMutation = useDeleteGun()
 
   const [selectedGun, setSelectedGun] = useState<Gun | null>(null)
   const [editModalOpen, setEditModalOpen] = useState(false)
+  const [createModalOpen, setCreateModalOpen] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [gunToDelete, setGunToDelete] = useState<Gun | null>(null)
   const [previewGun, setPreviewGun] = useState<Gun | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedRole, setSelectedRole] = useState<string | null>(null)
+  const [sortBy, setSortBy] = useState('name-asc')
 
   const handleEditClick = (gun: Gun) => {
     setSelectedGun(gun)
@@ -46,28 +54,75 @@ export function GunsTable() {
 
     try {
       await deleteMutation.mutateAsync(gunToDelete.id)
+
+      notifications.show({
+        color: 'green',
+        title: 'Success',
+        message: 'Weapon deleted successfully.',
+      })
+
       setDeleteModalOpen(false)
       setGunToDelete(null)
     } catch (err) {
       console.error('Error deleting gun:', err)
+
+      notifications.show({
+        color: 'red',
+        title: 'Error',
+        message: 'Weapon could not be deleted.',
+      })
+    }
+  }
+
+  const handleCreateGun = async (gunData: GunInput) => {
+    try {
+      await createMutation.mutateAsync(gunData)
+
+      notifications.show({
+        color: 'green',
+        title: 'Success',
+        message: 'Weapon created successfully.',
+      })
+
+      setCreateModalOpen(false)
+    } catch (err) {
+      console.error('Error creating gun:', err)
+
+      notifications.show({
+        color: 'red',
+        title: 'Error',
+        message: 'Weapon could not be created.',
+      })
     }
   }
 
   const handleUpdateGun = async (gunData: GunInput) => {
-    if (!selectedGun) return
+  if (!selectedGun) return
 
-    try {
-      await updateMutation.mutateAsync({
-        id: selectedGun.id,
-        gunData,
-      })
+  try {
+    await updateMutation.mutateAsync({
+      id: selectedGun.id,
+      gunData,
+    })
 
-      setEditModalOpen(false)
-      setSelectedGun(null)
-    } catch (err) {
-      console.error('Error updating gun:', err)
-    }
+    notifications.show({
+      color: 'green',
+      title: 'Success',
+      message: 'Weapon updated successfully.',
+    })
+
+    setEditModalOpen(false)
+    setSelectedGun(null)
+  } catch (err) {
+    console.error('Error updating gun:', err)
+
+    notifications.show({
+      color: 'red',
+      title: 'Error',
+      message: 'Weapon could not be updated.',
+    })
   }
+}
 
   if (isLoading) {
     return (
@@ -85,7 +140,45 @@ export function GunsTable() {
     )
   }
 
-  const rows = guns?.map((gun) => (
+  const roleOptions = Array.from(
+     new Set(guns?.map((gun) => gun.role) ?? [])
+    ).map((role) => ({
+     value: role,
+     label: role,
+  }))
+
+  const sortOptions = [
+    { value: 'name-asc', label: 'Name (A-Z)' },
+    { value: 'name-desc', label: 'Name (Z-A)' },
+    { value: 'role', label: 'Role (A-Z)' },
+  ]
+
+  const filteredGuns = guns
+    ?.filter((gun) => {
+      const matchesSearch = gun.name
+        .toLowerCase()
+        .includes(searchTerm.trim().toLowerCase())
+
+      const matchesRole = selectedRole
+        ? gun.role === selectedRole
+        : true
+
+      return matchesSearch && matchesRole
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'name-desc':
+          return b.name.localeCompare(a.name)
+
+        case 'role':
+          return a.role.localeCompare(b.role)
+
+        default:
+          return a.name.localeCompare(b.name)
+      }
+  })
+
+  const rows = filteredGuns?.map((gun) => (
     <Table.Tr key={gun.id}>
       <Table.Td style={{ minWidth: 120 }}>
         <Group gap="sm" wrap="nowrap">
@@ -178,16 +271,50 @@ export function GunsTable() {
   return (
     <Paper p="xl" radius="xl" className="panel-card">
       <Stack gap="md">
-        <div>
-          <Title order={2}>Weapon Management</Title>
+        <Group justify="space-between" align="flex-start">
+          <div>
+            <Title order={2}>Weapon Management</Title>
 
-          <Text c="dimmed" mt="xs">
-            Manage all weapons using the edit and delete functions.
-          </Text>
-        </div>
+            <Text c="dimmed" mt="xs">
+              Manage all weapons using the create, edit and delete functions.
+            </Text>
+          </div>
+
+          <Button onClick={() => setCreateModalOpen(true)}>
+            Add Weapon
+          </Button>
+        </Group>
+
+        <Group grow align="flex-end">
+          <TextInput
+            label="Search weapon"
+            placeholder="Enter weapon name..."
+            leftSection={<IconSearch size={16} />}
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.currentTarget.value)}
+          />
+
+          <Select
+            label="Filter by role"
+            placeholder="All roles"
+            data={roleOptions}
+            value={selectedRole}
+            onChange={setSelectedRole}
+            clearable
+          />
+
+          <Select
+            label="Sort by"
+            data={sortOptions}
+            value={sortBy}
+            onChange={(value) => {
+              if (value) setSortBy(value)
+            }}
+          />
+        </Group>
 
         <div style={{ overflowX: 'auto' }}>
-          <Table striped highlightOnHover style={{ minWidth: 1100 }}>
+          <Table striped highlightOnHover style={{ width: '100%', minWidth: 900 }}>
             <Table.Thead>
               <Table.Tr>
                 <Table.Th>Weapon</Table.Th>
@@ -200,16 +327,39 @@ export function GunsTable() {
               </Table.Tr>
             </Table.Thead>
 
-            <Table.Tbody>{rows}</Table.Tbody>
+            <Table.Tbody>
+              {rows && rows.length > 0 ? (
+                rows
+              ) : (
+                <Table.Tr>
+                  <Table.Td colSpan={5}>
+                    <Text ta="center" c="dimmed" py="xl">
+                      No weapons found.
+                    </Text>
+                  </Table.Td>
+                </Table.Tr>
+              )}
+            </Table.Tbody>
           </Table>
         </div>
 
         <Text c="dimmed" size="sm">
-          Total: {guns?.length || 0} weapons
+          Showing {filteredGuns?.length || 0} of {guns?.length || 0} weapons
         </Text>
       </Stack>
 
       <GunEditModal
+        key={createModalOpen ? 'create-open' : 'create-closed'}
+        opened={createModalOpen}
+        gun={null}
+        mode="create"
+        isLoading={createMutation.isPending}
+        onClose={() => setCreateModalOpen(false)}
+        onSubmit={handleCreateGun}
+      />
+
+      <GunEditModal
+        key={selectedGun?.id ?? 'no-gun'}
         opened={editModalOpen}
         gun={selectedGun}
         isLoading={updateMutation.isPending}
