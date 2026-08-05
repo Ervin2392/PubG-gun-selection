@@ -1,7 +1,7 @@
 export const navItems = [
   { label: 'Home', href: '/' },
-  { label: 'Gun Selection', href: '/gun-selection' },
-  { label: 'Loadouts', href: '/loadouts' },
+  { label: 'Weapons', href: '/gun-selection' },
+  { label: 'Loadout Builder', href: '/loadouts' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ]
