@@ -1,39 +1,38 @@
 import { useState } from 'react'
 import {
-  Table,
-  Paper,
-  Stack,
-  Title,
-  Badge,
-  Group,
   ActionIcon,
-  Text,
-  Loader,
-  Center,
   Alert,
+  Badge,
   Button,
-  Tooltip,
+  Center,
+  Group,
+  Loader,
   Modal,
-  TextInput,
+  Paper,
   Select,
-  Progress,
-  Divider,
-  SimpleGrid,
+  Stack,
+  Table,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
 } from '@mantine/core'
 import {
-  IconEdit,
-  IconTrash,
   IconAlertCircle,
+  IconEdit,
   IconSearch,
-  IconFlame,
-  IconTargetArrow,
-  IconBolt,
-  IconActivity,
+  IconTrash,
 } from '@tabler/icons-react'
-import { useGuns, useCreateGun, useUpdateGun, useDeleteGun } from '../utils/hooks'
+import { notifications } from '@mantine/notifications'
+import {
+  useCreateGun,
+  useDeleteGun,
+  useGuns,
+  useUpdateGun,
+} from '../utils/hooks'
 import type { Gun, GunInput } from '../utils/gunSchema'
 import { GunEditModal } from './GunEditModal'
-import { notifications } from '@mantine/notifications'
+import { WeaponPreviewModal } from './WeaponPreviewModal'
 
 export function GunsTable() {
   const { data: guns, isLoading, error } = useGuns()
@@ -47,6 +46,7 @@ export function GunsTable() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [gunToDelete, setGunToDelete] = useState<Gun | null>(null)
   const [previewGun, setPreviewGun] = useState<Gun | null>(null)
+
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState('name-asc')
@@ -109,32 +109,32 @@ export function GunsTable() {
   }
 
   const handleUpdateGun = async (gunData: GunInput) => {
-  if (!selectedGun) return
+    if (!selectedGun) return
 
-  try {
-    await updateMutation.mutateAsync({
-      id: selectedGun.id,
-      gunData,
-    })
+    try {
+      await updateMutation.mutateAsync({
+        id: selectedGun.id,
+        gunData,
+      })
 
-    notifications.show({
-      color: 'green',
-      title: 'Success',
-      message: 'Weapon updated successfully.',
-    })
+      notifications.show({
+        color: 'green',
+        title: 'Success',
+        message: 'Weapon updated successfully.',
+      })
 
-    setEditModalOpen(false)
-    setSelectedGun(null)
-  } catch (err) {
-    console.error('Error updating gun:', err)
+      setEditModalOpen(false)
+      setSelectedGun(null)
+    } catch (err) {
+      console.error('Error updating gun:', err)
 
-    notifications.show({
-      color: 'red',
-      title: 'Error',
-      message: 'Weapon could not be updated.',
-    })
+      notifications.show({
+        color: 'red',
+        title: 'Error',
+        message: 'Weapon could not be updated.',
+      })
+    }
   }
-}
 
   if (isLoading) {
     return (
@@ -153,23 +153,34 @@ export function GunsTable() {
   }
 
   const roleOptions = Array.from(
-     new Set(guns?.map((gun) => gun.role) ?? [])
-    ).map((role) => ({
-     value: role,
-     label: role,
+    new Set(guns?.map((gun) => gun.role) ?? []),
+  ).map((role) => ({
+    value: role,
+    label: role,
   }))
 
   const sortOptions = [
-    { value: 'name-asc', label: 'Name (A-Z)' },
-    { value: 'name-desc', label: 'Name (Z-A)' },
-    { value: 'role', label: 'Role (A-Z)' },
+    {
+      value: 'name-asc',
+      label: 'Name (A-Z)',
+    },
+    {
+      value: 'name-desc',
+      label: 'Name (Z-A)',
+    },
+    {
+      value: 'role',
+      label: 'Role (A-Z)',
+    },
   ]
 
   const filteredGuns = guns
     ?.filter((gun) => {
+      const normalizedSearchTerm = searchTerm.trim().toLowerCase()
+
       const matchesSearch = gun.name
         .toLowerCase()
-        .includes(searchTerm.trim().toLowerCase())
+        .includes(normalizedSearchTerm)
 
       const matchesRole = selectedRole
         ? gun.role === selectedRole
@@ -177,24 +188,18 @@ export function GunsTable() {
 
       return matchesSearch && matchesRole
     })
-    .sort((a, b) => {
+    .sort((firstGun, secondGun) => {
       switch (sortBy) {
         case 'name-desc':
-          return b.name.localeCompare(a.name)
+          return secondGun.name.localeCompare(firstGun.name)
 
         case 'role':
-          return a.role.localeCompare(b.role)
+          return firstGun.role.localeCompare(secondGun.role)
 
         default:
-          return a.name.localeCompare(b.name)
+          return firstGun.name.localeCompare(secondGun.name)
       }
-  })
-
-  const getStatColor = (value: number) => {
-    if (value >= 75) return 'green'
-    if (value >= 50) return 'yellow'
-    return 'red'
-  }
+    })
 
   const rows = filteredGuns?.map((gun) => (
     <Table.Tr key={gun.id}>
@@ -217,7 +222,11 @@ export function GunsTable() {
               {gun.name}
             </Text>
 
-            <Text size="sm" c="dimmed" style={{ whiteSpace: 'nowrap' }}>
+            <Text
+              size="sm"
+              c="dimmed"
+              style={{ whiteSpace: 'nowrap' }}
+            >
               ID: {gun.id}
             </Text>
           </div>
@@ -238,8 +247,12 @@ export function GunsTable() {
 
       <Table.Td>
         <Group gap="xs" wrap="wrap">
-          {gun.bullets.map((bullet, idx) => (
-            <Badge key={idx} size="sm" variant="dot">
+          {gun.bullets.map((bullet, index) => (
+            <Badge
+              key={`${gun.id}-${bullet}-${index}`}
+              size="sm"
+              variant="dot"
+            >
               {bullet}
             </Badge>
           ))}
@@ -309,7 +322,9 @@ export function GunsTable() {
             placeholder="Enter weapon name..."
             leftSection={<IconSearch size={16} />}
             value={searchTerm}
-            onChange={(event) => setSearchTerm(event.currentTarget.value)}
+            onChange={(event) =>
+              setSearchTerm(event.currentTarget.value)
+            }
           />
 
           <Select
@@ -326,19 +341,29 @@ export function GunsTable() {
             data={sortOptions}
             value={sortBy}
             onChange={(value) => {
-              if (value) setSortBy(value)
+              if (value) {
+                setSortBy(value)
+              }
             }}
           />
         </Group>
 
         <div style={{ overflowX: 'auto' }}>
-          <Table striped highlightOnHover style={{ width: '100%', minWidth: 900 }}>
+          <Table
+            striped
+            highlightOnHover
+            style={{
+              width: '100%',
+              minWidth: 900,
+            }}
+          >
             <Table.Thead>
               <Table.Tr>
                 <Table.Th>Weapon</Table.Th>
                 <Table.Th>Role</Table.Th>
                 <Table.Th>Description</Table.Th>
                 <Table.Th>Features</Table.Th>
+
                 <Table.Th style={{ textAlign: 'right' }}>
                   Actions
                 </Table.Th>
@@ -362,7 +387,8 @@ export function GunsTable() {
         </div>
 
         <Text c="dimmed" size="sm">
-          Showing {filteredGuns?.length || 0} of {guns?.length || 0} weapons
+          Showing {filteredGuns?.length ?? 0} of {guns?.length ?? 0}{' '}
+          weapons
         </Text>
       </Stack>
 
@@ -424,171 +450,10 @@ export function GunsTable() {
         </Stack>
       </Modal>
 
-      <Modal
-        opened={!!previewGun}
+      <WeaponPreviewModal
+        gun={previewGun}
         onClose={() => setPreviewGun(null)}
-        title={previewGun?.name}
-        size="xl"
-        centered
-      >
-        {previewGun && (
-          <Stack gap="xl">
-
-            <Paper
-              withBorder
-              radius="lg"
-              p="xl"
-              style={{
-                background:
-                  'linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(17, 24, 39, 0.85))',
-              }}
-            >
-              <img
-                src={previewGun.image}
-                alt={previewGun.name}
-                style={{
-                  width: '100%',
-                  height: 300,
-                  objectFit: 'contain',
-                  display: 'block',
-                }}
-              />
-            </Paper>
-
-            <div>
-              <Title order={2}>{previewGun.name}</Title>
-
-              <Badge mt="sm" size="lg" color="blue">
-                {previewGun.role}
-              </Badge>
-            </div>
-
-            <Divider />
-
-            <SimpleGrid cols={2} spacing="xl">
-
-              <div>
-                <Group gap="xs" mb={4}>
-                  <IconFlame size={18} />
-                  <Text fw={600}>
-                    Damage ({previewGun.damage})
-                  </Text>
-                </Group>
-
-                <Progress
-                  value={previewGun.damage}
-                  color={getStatColor(previewGun.damage)}
-                  size="lg"
-                  radius="xl"
-                />
-              </div>
-
-              <div>
-                <Group gap="xs" mb={4}>
-                  <IconTargetArrow size={18} />
-                  <Text fw={600}>
-                    Range ({previewGun.range})
-                  </Text>
-                </Group>
-
-                <Progress value={previewGun.range} color={getStatColor(previewGun.range)} size="lg" radius="xl" />
-              </div>
-
-              <div>
-                <Group gap="xs" mb={4}>
-                  <IconBolt size={18} />
-                  <Text fw={600}>
-                    Fire Rate ({previewGun.fireRate})
-                  </Text>
-                </Group>
-
-                <Progress
-                  value={previewGun.fireRate}
-                  color={getStatColor(previewGun.fireRate)}
-                  size="lg"
-                  radius="xl"
-                />
-              </div>
-
-              <div>
-                <Group gap="xs" mb={4}>
-                  <IconActivity size={18} />
-                  <Text fw={600}>
-                    Recoil ({previewGun.recoil})
-                  </Text>
-                </Group>
-
-                <Progress value={previewGun.recoil} color={getStatColor(previewGun.recoil)} size="lg" radius="xl" />
-              </div>
-
-            </SimpleGrid>
-
-            <Divider />
-
-            <SimpleGrid cols={2}>
-
-              <Paper withBorder p="md" radius="md">
-                <Text size="sm" c="dimmed">
-                  Magazine Size
-                </Text>
-
-                <Title order={3}>
-                  {previewGun.magazineSize}
-                </Title>
-              </Paper>
-
-              <Paper withBorder p="md" radius="md">
-                <Text size="sm" c="dimmed">
-                  Ammo Type
-                </Text>
-
-                <Title order={3}>
-                  {previewGun.ammoType}
-                </Title>
-              </Paper>
-
-            </SimpleGrid>
-
-            <Divider />
-
-            <div>
-
-              <Text fw={600} mb="sm">
-                Features
-              </Text>
-
-              <Group gap="sm">
-                {previewGun.bullets.map((bullet) => (
-                  <Badge
-                    key={bullet}
-                    color="green"
-                    size="lg"
-                    variant="light"
-                  >
-                    ✓ {bullet}
-                  </Badge>
-                ))}
-              </Group>
-
-            </div>
-
-            <Divider />
-
-            <div>
-
-              <Text fw={600} mb="sm">
-                Description
-              </Text>
-
-              <Text c="dimmed">
-                {previewGun.description}
-              </Text>
-
-            </div>
-
-          </Stack>
-        )}
-      </Modal>
+      />
     </Paper>
   )
 }

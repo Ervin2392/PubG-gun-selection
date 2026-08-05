@@ -1,10 +1,10 @@
-import { MantineProvider, Text, Title } from '@mantine/core'
+import { MantineProvider } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
 import '@mantine/carousel/styles.css'
 import './App.css'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, Link } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TopNavigation } from './components/TopNavigation'
 import { AppRoutes } from './routes/AppRoutes'
@@ -21,13 +21,17 @@ function App() {
         <BrowserRouter>
           <div className="app-shell">
             <header className="topbar">
-              <div>
-                <Text size="xs" tt="uppercase" c="dimmed" fw={700}>
-                  PUBG Weapons Overview
-                </Text>
+              <Link
+                to="/"
+                className="app-brand"
+                aria-label="Go to homepage"
+              >
+                <span className="app-brand__pubg">PUBG</span>
 
-                <Title order={2}>PUBG Weapons Overview</Title>
-              </div>
+                <span className="app-brand__subtitle">
+                  Weapons Overview
+                </span>
+              </Link>
 
               <TopNavigation items={navItems} />
             </header>

@@ -1,48 +1,139 @@
 .app-shell {
   min-height: 100vh;
-  background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
-  color: #f9fafb;
   padding: 24px;
+  color: #f9fafb;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(59, 130, 246, 0.1),
+      transparent 32%
+    ),
+    linear-gradient(135deg, #111827 0%, #1f2937 100%);
 }
+
+/* Navigation */
 
 .topbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  padding: 20px 24px;
+  justify-content: space-between;
+  gap: 32px;
+  min-height: 76px;
+  padding: 14px 24px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 24px;
-  background: rgba(17, 24, 39, 0.9);
+  background: rgba(17, 24, 39, 0.92);
   backdrop-filter: blur(12px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+}
+
+.app-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.app-brand__pubg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 82px;
+  padding: 8px 12px;
+  border: 2px solid #f59e0b;
+  border-radius: 6px;
+  color: #fbbf24;
+  font-size: 1.35rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: skew(-4deg);
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.app-brand__subtitle {
+  max-width: 120px;
+  color: #d1d5db;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.app-brand:hover .app-brand__pubg {
+  color: #111827;
+  background: #f59e0b;
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.3);
 }
 
 .top-nav {
   display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
 }
 
-.top-nav .nav-link,
-.drawer-link {
-  color: #d1d5db;
-  text-decoration: none;
-  transition: color 0.2s ease;
+.top-nav {
+  display: flex;
+  align-items: center;
+  gap: 36px;
 }
 
 .top-nav .nav-link {
+  position: relative;
   display: inline-block;
+  padding: 6px 0;
+  color: #bfc7d5;
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: all 0.25s ease;
 }
 
-.nav-link:hover,
-.drawer-link:hover {
-  color: #fff;
+.top-nav .nav-link:hover {
+  color: #ffffff;
 }
 
-.nav-link.active,
+.top-nav .nav-link::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 0;
+  height: 3px;
+  border-radius: 999px;
+  background: #3b82f6;
+  transform: translateX(-50%);
+  transition: width 0.25s ease;
+}
+
+.top-nav .nav-link:hover::after {
+  width: 60%;
+}
+
+.top-nav .nav-link.active {
+  color: #ffffff;
+}
+
+.top-nav .nav-link.active::after {
+  width: 100%;
+  box-shadow: 0 0 14px rgba(59,130,246,.6);
+}
+
+.drawer-link {
+  color: #d1d5db;
+  text-decoration: none;
+}
+
 .drawer-link.active {
-  color: #fff;
+  color: white;
   font-weight: 700;
 }
 
@@ -57,15 +148,7 @@
   margin-top: 24px;
 }
 
-/* Ensure tables in panel cards fit and can scroll horizontally on small screens */
-.panel-card {
-  overflow: visible;
-}
-
-.panel-card table {
-  width: 100%;
-  min-width: 700px;
-}
+/* Shared cards */
 
 .hero-panel,
 .panel-card,
@@ -82,17 +165,163 @@
 
 .panel-card {
   padding: 24px;
+  overflow: visible;
+}
+
+.panel-card table {
+  width: 100%;
+  min-width: 700px;
 }
 
 .info-card {
   padding: 20px;
 }
 
+/* Home page hero */
+
+.home-hero {
+  position: relative;
+  min-height: 540px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 56px 64px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px;
+  background: #050c18;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+}
+
+.home-hero__image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right bottom;
+}
+
+.home-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(5, 12, 24, 0.99) 0%,
+      rgba(5, 12, 24, 0.92) 32%,
+      rgba(5, 12, 24, 0.62) 55%,
+      rgba(5, 12, 24, 0.15) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(5, 12, 24, 0.08) 0%,
+      transparent 55%,
+      rgba(5, 12, 24, 0.2) 100%
+    );
+}
+
+.home-hero__content {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 620px);
+}
+
+.home-hero__eyebrow {
+  color: #60a5fa;
+  letter-spacing: 0.14em;
+}
+
+.home-hero__title {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-size: clamp(2.5rem, 4vw, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.home-hero__title-highlight {
+  color: #3b82f6;
+}
+
+.home-hero__description {
+  max-width: 520px;
+  font-size: 1.08rem;
+  line-height: 1.7;
+}
+
+.home-hero__stats {
+  margin-top: 8px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.home-hero__stats .mantine-ThemeIcon-root {
+  flex-shrink: 0;
+  color: #93c5fd;
+  background: rgba(59, 130, 246, 0.16);
+  border: 1px solid rgba(96, 165, 250, 0.16);
+}
+
+/* Home popular weapons */
+
+.home-popular-section {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(17, 24, 39, 0.9);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.22);
+}
+
+.home-section-eyebrow {
+  color: #60a5fa;
+  letter-spacing: 0.12em;
+}
+
+.home-weapon-card {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.035);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.home-weapon-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(96, 165, 250, 0.35);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.24);
+}
+
+.home-weapon-card__image-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  padding: 16px;
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.08),
+    rgba(255, 255, 255, 0.025)
+  );
+}
+
+.home-weapon-card__image {
+  width: 100%;
+  height: 130px;
+  object-fit: contain;
+}
+
+/* Carousel */
+
 .carousel-slide {
   position: relative;
   height: 320px;
-  border-radius: 20px;
   overflow: hidden;
+  border-radius: 20px;
 }
 
 .carousel-slide img {
@@ -103,23 +332,43 @@
 
 .carousel-overlay {
   position: absolute;
-  inset: auto 0 0 0;
+  inset: auto 0 0;
   padding: 20px;
-  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.75) 100%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.75) 100%
+  );
 }
+
+/* Gun cards */
 
 .gun-card {
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.04);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.gun-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(96, 165, 250, 0.35);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.22);
 }
 
 .gun-image {
   width: 100%;
   height: 180px;
+  padding: 12px;
   object-fit: contain;
   border-radius: 14px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
-  padding: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.02)
+  );
 }
 
 .gun-bullets {
@@ -132,29 +381,7 @@
   margin-bottom: 6px;
 }
 
-@media (max-width: 800px) {
-  .app-shell {
-    padding: 12px;
-  }
-
-  .topbar {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .top-nav {
-    display: none;
-  }
-
-  .mobile-burger {
-    display: block;
-  }
-
-  .hero-panel {
-    padding: 24px;
-  }
-}
+/* Loadout layout */
 
 .loadout-grid {
   display: grid;
@@ -172,6 +399,8 @@
   gap: 1rem;
 }
 
+/* Responsive */
+
 @media (min-width: 1200px) {
   .loadout-grid__right {
     grid-template-columns: 1fr 1fr;
@@ -181,5 +410,119 @@
 @media (max-width: 1200px) {
   .loadout-grid--desktop {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 800px) {
+  .app-shell {
+    padding: 12px;
+  }
+
+  .topbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+  }
+
+    .app-brand {
+    gap: 10px;
+  }
+
+  .app-brand__pubg {
+    min-width: 66px;
+    padding: 7px 9px;
+    font-size: 1.05rem;
+  }
+
+  .app-brand__subtitle {
+    max-width: 90px;
+    font-size: 0.58rem;
+  }
+
+  .top-nav {
+    display: none;
+  }
+
+  .mobile-burger {
+    display: block;
+  }
+
+  .main-content {
+    margin-top: 16px;
+  }
+
+  .hero-panel {
+    padding: 24px;
+  }
+
+  .panel-card {
+    padding: 18px;
+  }
+
+  .home-hero {
+    min-height: 580px;
+    padding: 32px 24px;
+    align-items: flex-end;
+  }
+
+  .home-hero__image {
+    object-position: 68% bottom;
+  }
+
+  .home-hero__overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(5, 12, 24, 0.15) 0%,
+      rgba(5, 12, 24, 0.62) 38%,
+      rgba(5, 12, 24, 0.98) 100%
+    );
+  }
+
+  .home-hero__content {
+    width: 100%;
+  }
+
+  .home-hero__title {
+    font-size: clamp(2.7rem, 14vw, 4.2rem);
+  }
+
+  .home-hero__description {
+    font-size: 1rem;
+  }
+
+  .home-hero__stats {
+    padding-top: 16px;
+  }
+
+  .home-popular-section {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 520px) {
+  .home-hero {
+    min-height: 650px;
+    padding: 28px 20px;
+  }
+
+  .home-hero__title {
+    font-size: clamp(2.5rem, 15vw, 3.7rem);
+  }
+
+  .home-hero__description {
+    line-height: 1.6;
+  }
+
+  .home-hero__stats {
+    row-gap: 16px;
+  }
+
+  .home-weapon-card__image-wrap {
+    min-height: 130px;
+  }
+
+  .home-weapon-card__image {
+    height: 115px;
   }
 }
