@@ -2,11 +2,10 @@ export const navItems = [
   { label: 'Home', href: '/' },
   { label: 'Weapons', href: '/gun-selection' },
   { label: 'Loadout Builder', href: '/loadouts' },
+  { label: 'My Arsenal', href: '/my-arsenal' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ]
-
-
 
 export const slides = [
   {

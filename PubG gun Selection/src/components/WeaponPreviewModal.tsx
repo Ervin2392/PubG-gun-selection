@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   Badge,
   Divider,
   Group,
@@ -9,14 +10,18 @@ import {
   Stack,
   Text,
   Title,
+  Tooltip,
 } from '@mantine/core'
 import {
   IconActivity,
   IconBolt,
   IconFlame,
+  IconStar,
+  IconStarFilled,
   IconTargetArrow,
 } from '@tabler/icons-react'
 import type { Gun } from '../utils/gunSchema'
+import { useFavorites } from '../hooks/useFavorites'
 
 interface WeaponPreviewModalProps {
   gun: Gun | null
@@ -39,7 +44,10 @@ export function WeaponPreviewModal({
   gun,
   onClose,
 }: WeaponPreviewModalProps) {
+  const { isFavorite, toggleFavorite } = useFavorites()
+
   const isOpen = gun !== null
+  const favorite = gun ? isFavorite(gun.name) : false
 
   return (
     <Modal
@@ -58,10 +66,44 @@ export function WeaponPreviewModal({
             radius="lg"
             p="xl"
             style={{
+              position: 'relative',
               background:
                 'linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(17, 24, 39, 0.85))',
             }}
           >
+            <Tooltip
+              label={
+                favorite
+                  ? 'Remove from favorites'
+                  : 'Add to favorites'
+              }
+            >
+              <ActionIcon
+                size="lg"
+                radius="xl"
+                variant={favorite ? 'filled' : 'light'}
+                color={favorite ? 'yellow' : 'gray'}
+                onClick={() => toggleFavorite(gun.name)}
+                aria-label={
+                  favorite
+                    ? 'Remove from favorites'
+                    : 'Add to favorites'
+                }
+                style={{
+                  position: 'absolute',
+                  top: 16,
+                  right: 16,
+                  zIndex: 2,
+                }}
+              >
+                {favorite ? (
+                  <IconStarFilled size={20} />
+                ) : (
+                  <IconStar size={20} />
+                )}
+              </ActionIcon>
+            </Tooltip>
+
             <img
               src={gun.image}
               alt={gun.name}
@@ -75,7 +117,15 @@ export function WeaponPreviewModal({
           </Paper>
 
           <div>
-            <Title order={2}>{gun.name}</Title>
+            <Group justify="space-between" align="center">
+              <Title order={2}>{gun.name}</Title>
+
+              {favorite ? (
+                <Badge color="yellow" variant="light">
+                  Favorite
+                </Badge>
+              ) : null}
+            </Group>
 
             <Badge mt="sm" size="lg" color="blue">
               {gun.role}

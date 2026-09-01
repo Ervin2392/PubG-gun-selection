@@ -21,6 +21,8 @@ import {
   IconAlertCircle,
   IconEdit,
   IconSearch,
+  IconStar,
+  IconStarFilled,
   IconTrash,
 } from '@tabler/icons-react'
 import { notifications } from '@mantine/notifications'
@@ -33,8 +35,10 @@ import {
 import type { Gun, GunInput } from '../utils/gunSchema'
 import { GunEditModal } from './GunEditModal'
 import { WeaponPreviewModal } from './WeaponPreviewModal'
+import { useFavorites } from '../hooks/useFavorites'
 
 export function GunsTable() {
+  const { isFavorite, toggleFavorite } = useFavorites()
   const { data: guns, isLoading, error } = useGuns()
   const createMutation = useCreateGun()
   const updateMutation = useUpdateGun()
@@ -282,6 +286,31 @@ export function GunsTable() {
               aria-label={`Delete ${gun.name}`}
             >
               <IconTrash size={16} />
+            </ActionIcon>
+          </Tooltip>
+
+                    <Tooltip
+            label={
+              isFavorite(gun.name)
+                ? 'Remove from My Arsenal'
+                : 'Add to My Arsenal'
+            }
+          >
+            <ActionIcon
+              variant={isFavorite(gun.name) ? 'filled' : 'light'}
+              color={isFavorite(gun.name) ? 'yellow' : 'gray'}
+              onClick={() => toggleFavorite(gun.name)}
+              aria-label={
+                isFavorite(gun.name)
+                  ? `Remove ${gun.name} from My Arsenal`
+                  : `Add ${gun.name} to My Arsenal`
+              }
+            >
+              {isFavorite(gun.name) ? (
+                <IconStarFilled size={17} />
+              ) : (
+                <IconStar size={17} />
+              )}
             </ActionIcon>
           </Tooltip>
 
