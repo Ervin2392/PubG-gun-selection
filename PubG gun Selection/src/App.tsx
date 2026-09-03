@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TopNavigation } from './components/TopNavigation'
 import { AppRoutes } from './routes/AppRoutes'
 import { navItems } from './utils/content'
+import { Analytics } from '@vercel/analytics/react'
 
 const queryClient = new QueryClient()
 
@@ -17,7 +18,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <MantineProvider defaultColorScheme="dark">
         <Notifications />
-
+        <Analytics />
         <BrowserRouter>
           <div className="app-shell">
             <header className="topbar">
